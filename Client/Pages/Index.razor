@@ -1,9 +1,32 @@
 ﻿@page "/"
+@using Blazored.LocalStorage
+@using Resume.WASM.MoneyForcaster.Models
+@inject ILocalStorageService localStorage
 
 <PageTitle>Index</PageTitle>
+<MudText>@Bills.Count()</MudText>
+<MudButton OnClick="(()=> AddBill())">Add Bill</MudButton>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+@code {
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    public List<Bill> Bills = new List<Bill>();
+    protected override async Task OnInitializedAsync()
+    {
+        Bills = await localStorage.GetItemAsync<List<Bill>>("bills");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
+        Bills = await localStorage.GetItemAsync<List<Bill>>("bills");
+        if (firstRender) this.StateHasChanged();
+    }
+
+    private async Task AddBill()
+    {
+        Bills.Add(new Bill() { Name = "bullshit" });
+        await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
+
+    }
+}
