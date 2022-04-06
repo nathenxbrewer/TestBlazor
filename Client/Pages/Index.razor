@@ -4,7 +4,7 @@
 @inject ILocalStorageService localStorage
 
 <PageTitle>Index</PageTitle>
-<MudText>@Bills.Count()</MudText>
+<MudText>@Bills?.Count()</MudText>
 <MudButton OnClick="(()=> AddBill())">Add Bill</MudButton>
 
 
@@ -13,12 +13,12 @@
     public List<Bill> Bills = new List<Bill>();
     protected override async Task OnInitializedAsync()
     {
-        Bills = await localStorage.GetItemAsync<List<Bill>>("bills");
+        var bills = await localStorage.GetItemAsync<List<Bill>>("bills");
+        if (bills == null) await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
         Bills = await localStorage.GetItemAsync<List<Bill>>("bills");
         if (firstRender) this.StateHasChanged();
     }
