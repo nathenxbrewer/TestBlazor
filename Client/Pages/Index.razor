@@ -3,13 +3,46 @@
 @using Resume.WASM.MoneyForcaster.Models
 @inject ILocalStorageService localStorage
 
-<PageTitle>Index</PageTitle>
+
+
+<MudGrid Class="mt-4">
+    <PageTitle>Index</PageTitle>
 <MudText>@Bills?.Count()</MudText>
 <MudButton OnClick="(()=> AddBill())">Add Bill</MudButton>
 
+    <MudItem xs="12" sm="12" md="12">
+        <MudText Typo="Typo.h3">Balance Forcaster</MudText>
+    </MudItem>
+   <MudItem xs="12" sm="6" md="3">
+        <MudPaper  Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+            <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+            <div>
+                <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Income</MudText>
+                <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Alarms">2</MudLink>
+            </div>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper  Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+            <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+            <div>
+                <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Bills</MudText>
+                <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Bills">@Bills.Count()</MudLink>
+            </div>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+<InputDate @bind-Value="dateText" />
+<MudButton xs="12" Class="mb-4 mt-4" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="CalculateBalance">Calculate Balance</MudButton>
+
+
+<MudDivider></MudDivider>
+
 
 @code {
-
+    public DateTime date = DateTime.Today.AddDays(30);
+    private string dateText = "2022-04-06";
     public List<Bill> Bills = new List<Bill>();
     protected override async Task OnInitializedAsync()
     {
@@ -27,6 +60,19 @@
     {
         Bills.Add(new Bill() { Name = "bullshit" });
         await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
-
     }
+
+    public async void CalculateBalance()
+    {
+        //var apiName = $"https://localhost:7179/GetForcastedBalance?startingBalance=0&date={date.Value.ToShortDateString()}&includeBudgets=true";
+        //var httpResponse = await _httpClient.GetAsync(apiName);
+
+        //if (httpResponse.IsSuccessStatusCode)
+        //{
+        //    var forcastedBalanceResponse = JsonConvert.DeserializeObject<ForcastedBalance>(await httpResponse.Content.ReadAsStringAsync());
+        //    ForcastedBalance = forcastedBalanceResponse.Amount;
+        //    StateHasChanged();
+        //}
+    }
+
 }
