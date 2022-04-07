@@ -1,7 +1,9 @@
 ﻿@page "/"
+@using BlazorApp.Client.Shared.Dialogs
 @using Blazored.LocalStorage
 @using Resume.WASM.MoneyForcaster.Models
 @inject ILocalStorageService localStorage
+@inject IDialogService Dialog
 
 
 
@@ -44,6 +46,9 @@
     public DateTime? date = DateTime.Today.AddDays(30);
     private string dateText = "2022-04-06";
     public List<Bill> Bills = new List<Bill>();
+
+    DialogOptions fullScreen = new DialogOptions() { FullScreen = true, CloseButton = true };
+
     protected override async Task OnInitializedAsync()
     {
         var bills = await localStorage.GetItemAsync<List<Bill>>("bills");
@@ -58,6 +63,7 @@
 
     private async Task AddBill()
     {
+        Dialog.Show<DefaultDialog>("Custom Options Dialog", fullScreen);
         Bills.Add(new Bill() { Name = "bullshit" });
         await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
     }
