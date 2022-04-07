@@ -7,14 +7,14 @@
 
 <MudGrid Class="mt-4">
     <PageTitle>Index</PageTitle>
-<MudText>@Bills?.Count()</MudText>
-<MudButton OnClick="(()=> AddBill())">Add Bill</MudButton>
+    <MudText>@Bills?.Count()</MudText>
+    <MudButton OnClick="(()=> AddBill())">Add Bill</MudButton>
 
     <MudItem xs="12" sm="12" md="12">
         <MudText Typo="Typo.h3">Balance Forcaster</MudText>
     </MudItem>
-   <MudItem xs="12" sm="6" md="3">
-        <MudPaper  Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
             <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
             <div>
                 <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Income</MudText>
@@ -23,7 +23,7 @@
         </MudPaper>
     </MudItem>
     <MudItem xs="12" sm="6" md="3">
-        <MudPaper  Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+        <MudPaper Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
             <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
             <div>
                 <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Bills</MudText>
@@ -33,7 +33,7 @@
     </MudItem>
 </MudGrid>
 
-<InputDate @bind-Value="dateText" />
+<MudDatePicker @bind-Date=date PickerVariant="PickerVariant.Dialog"></MudDatePicker>
 <MudButton xs="12" Class="mb-4 mt-4" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="CalculateBalance">Calculate Balance</MudButton>
 
 
@@ -41,7 +41,7 @@
 
 
 @code {
-    public DateTime date = DateTime.Today.AddDays(30);
+    public DateTime? date = DateTime.Today.AddDays(30);
     private string dateText = "2022-04-06";
     public List<Bill> Bills = new List<Bill>();
     protected override async Task OnInitializedAsync()
