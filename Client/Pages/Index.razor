@@ -63,7 +63,7 @@
 
     private async Task AddBill()
     {
-        Dialog.Show<DefaultDialog>("Custom Options Dialog", fullScreen);
+        Dialog.Show<DefaultDialog>("Add New Bill", fullScreen);
         Bills.Add(new Bill() { Name = "bullshit" });
         await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
     }
