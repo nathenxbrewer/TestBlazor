@@ -8,6 +8,7 @@ namespace BlazorApp.Shared.Models
 {
     public class Income
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public bool isOneTime { get; set; }
         public double Amount { get; set; }

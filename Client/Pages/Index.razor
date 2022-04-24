@@ -16,7 +16,7 @@
             <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
             <div>
                 <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Income</MudText>
-                <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Incomes">@Incomes.Count()</MudLink>
+                <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Incomes">@Incomes?.Count()</MudLink>
             </div>
         </MudPaper>
     </MudItem>
@@ -25,7 +25,7 @@
             <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
             <div>
                 <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Bills</MudText>
-                <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Bills">@Bills.Count()</MudLink>
+                <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Bills">@Bills?.Count()</MudLink>
             </div>
         </MudPaper>
     </MudItem>
@@ -52,7 +52,7 @@
             await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
 
         if(!await localStorage.ContainKeyAsync("incomes"))
-            await localStorage.SetItemAsync("incomes", Incomes);
+            await localStorage.SetItemAsync<List<Income>>("incomes", Incomes);
             
         var bills = await localStorage.GetItemAsync<List<Bill>>("bills");
         if (bills == null) await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
