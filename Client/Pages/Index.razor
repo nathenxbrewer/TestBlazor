@@ -3,15 +3,11 @@
 @using Blazored.LocalStorage
 @using Resume.WASM.MoneyForcaster.Models
 @inject ILocalStorageService localStorage
-@inject IDialogService Dialog
 
 
 
 <MudGrid Class="mt-4">
     <PageTitle>Index</PageTitle>
-    <MudText>@Bills?.Count()</MudText>
-    <MudButton OnClick="(()=> AddBill())">Add Bill</MudButton>
-
     <MudItem xs="12" sm="12" md="12">
         <MudText Typo="Typo.h3">Balance Forcaster</MudText>
     </MudItem>
@@ -20,7 +16,7 @@
             <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
             <div>
                 <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Income</MudText>
-                <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Alarms">2</MudLink>
+                <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Income">2</MudLink>
             </div>
         </MudPaper>
     </MudItem>
@@ -51,6 +47,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (!await localStorage.ContainKeyAsync("bills")) ;
+            await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
         var bills = await localStorage.GetItemAsync<List<Bill>>("bills");
         if (bills == null) await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
     }
@@ -59,13 +57,6 @@
     {
         Bills = await localStorage.GetItemAsync<List<Bill>>("bills");
         if (firstRender) this.StateHasChanged();
-    }
-
-    private async Task AddBill()
-    {
-        Dialog.Show<DefaultDialog>("Add New Bill", fullScreen);
-        Bills.Add(new Bill() { Name = "bullshit" });
-        await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
     }
 
     public async void CalculateBalance()

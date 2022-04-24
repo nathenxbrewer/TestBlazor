@@ -1,0 +1,59 @@
+﻿@using Resume.WASM.MoneyForcaster.Models
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Article" Class="mr-3 " />
+            Add New Bill
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <EditForm Model="@bill" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            <MudTextField Class="pb-4" @bind-Value="@bill.Name" Label="Name" />
+            <MudDatePicker Class="pb-4" Label="Begin Date" @bind-Date=bill.BeginDate PickerVariant="PickerVariant.Dialog"></MudDatePicker>
+            <MudDatePicker Class="pb-4" Label="End Date" @bind-Date=bill.EndDate PickerVariant="PickerVariant.Dialog"></MudDatePicker>
+            <MudSelect Class="pb-4" T="int" @bind-Value=bill.DayOfMonth Label="Day Of Month" AnchorOrigin="Origin.BottomCenter">
+                @for (int i = 1; i < 32; i++)
+                {
+                    <MudSelectItem Value=i />
+                }
+            </MudSelect>
+            <MudTextField Class="pb-4" @bind-Value="bill.Amount" Label="Amount" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+            <MudTextField Class="pb-4" T="string" Label="Notes" Variant="Variant.Outlined" @bind-Value=bill.Notes Text="@bill.Notes" Lines="3" />
+
+            <MudText Color="@Color.Error">
+                <ValidationSummary />
+            </MudText>
+
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Submit</MudButton>
+        </EditForm>
+    </DialogContent>
+</MudDialog>
+
+
+@code {
+
+    bool success;
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    Bill bill { get; set; } = new Bill();
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private void AddBill()
+    {
+        MudDialog.Close(DialogResult.Ok(bill));
+    }
+
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        AddBill();
+        StateHasChanged();
+    }
+}
