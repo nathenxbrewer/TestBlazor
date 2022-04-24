@@ -1,7 +1,7 @@
 ﻿@page "/"
 @using BlazorApp.Client.Shared.Dialogs
 @using Blazored.LocalStorage
-@using Resume.WASM.MoneyForcaster.Models
+@using BlazorApp.Shared.Models
 @inject ILocalStorageService localStorage
 
 
@@ -16,7 +16,7 @@
             <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
             <div>
                 <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Income</MudText>
-                <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Income">2</MudLink>
+                <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Incomes">@Incomes.Count()</MudLink>
             </div>
         </MudPaper>
     </MudItem>
@@ -42,20 +42,29 @@
     public DateTime? date = DateTime.Today.AddDays(30);
     private string dateText = "2022-04-06";
     public List<Bill> Bills = new List<Bill>();
+    public List<Income> Incomes = new List<Income>();
 
     DialogOptions fullScreen = new DialogOptions() { FullScreen = true, CloseButton = true };
 
     protected override async Task OnInitializedAsync()
     {
-        if (!await localStorage.ContainKeyAsync("bills")) ;
+        if (!await localStorage.ContainKeyAsync("bills"))
             await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
+
+        if(!await localStorage.ContainKeyAsync("incomes"))
+            await localStorage.SetItemAsync("incomes", Incomes);
+            
         var bills = await localStorage.GetItemAsync<List<Bill>>("bills");
         if (bills == null) await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
+
+        var incomes = await localStorage.GetItemAsync<List<Income>>("incomes");
+        if (incomes == null) await localStorage.SetItemAsync<List<Income>>("incomes", Incomes);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         Bills = await localStorage.GetItemAsync<List<Bill>>("bills");
+        Incomes = await localStorage.GetItemAsync<List<Income>>("incomes");
         if (firstRender) this.StateHasChanged();
     }
 

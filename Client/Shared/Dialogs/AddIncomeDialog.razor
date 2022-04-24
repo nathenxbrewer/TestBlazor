@@ -1,0 +1,52 @@
+﻿@using BlazorApp.Shared.Models
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Article" Class="mr-3 " />
+            Add New Income
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <EditForm Model="@income" OnValidSubmit="OnValidSubmit">
+            <DataAnnotationsValidator />
+            <MudTextField Class="pb-4" @bind-Value="@income.Name" Label="Name" />
+            <MudDatePicker Class="pb-4" Label="Begin Date" @bind-Date=income.BeginDate PickerVariant="PickerVariant.Dialog"></MudDatePicker>
+            <MudDatePicker Class="pb-4" Label="End Date" @bind-Date=income.EndDate PickerVariant="PickerVariant.Dialog"></MudDatePicker>
+            <MudSelect Class="pb-4" T="int" @bind-Value=income.OccuranceDays Label="Day Of Month" AnchorOrigin="Origin.BottomCenter">
+                <MudSelectItem Value="7">Weekly</MudSelectItem>
+                <MudSelectItem Value="14">Bi-Weekly</MudSelectItem>
+            </MudSelect>
+            <MudTextField Class="pb-4" @bind-Value="income.Amount" Label="Amount" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+            <MudTextField Class="pb-4" T="string" Label="Notes" Variant="Variant.Outlined" @bind-Value=income.Notes Text="@income.Notes" Lines="3" />
+
+            <MudText Color="@Color.Error">
+                <ValidationSummary />
+            </MudText>
+
+            <MudButton OnClick="Cancel">Cancel</MudButton>
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Submit</MudButton>
+        </EditForm>
+    </DialogContent>
+</MudDialog>
+
+
+@code {
+
+    bool success;
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    Income income { get; set; } = new ();
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        MudDialog.Close(DialogResult.Ok(income));
+        StateHasChanged();
+    }
+}

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Resume.WASM.MoneyForcaster.Models
+namespace BlazorApp.Shared.Models
 {
     public class Bill
     {
