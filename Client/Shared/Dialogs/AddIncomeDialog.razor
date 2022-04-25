@@ -36,7 +36,13 @@
     bool success;
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    Income income { get; set; } = new ();
+    Income income { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
 
     private void Cancel()
     {

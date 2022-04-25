@@ -1,8 +1,10 @@
 ﻿@page "/"
+@using BlazorApp.Client.Services
 @using BlazorApp.Client.Shared.Dialogs
 @using Blazored.LocalStorage
 @using BlazorApp.Shared.Models
 @inject ILocalStorageService localStorage
+@inject TransactionService _transactionService
 
 
 
@@ -29,11 +31,22 @@
             </div>
         </MudPaper>
     </MudItem>
+
+    <MudItem xs="12" sm="6" md="3">
+        <MudPaper Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+            <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+            <div>
+                <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Bills</MudText>
+                <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Budgets">@Budgets?.Count()</MudLink>
+            </div>
+        </MudPaper>
+    </MudItem>
 </MudGrid>
 
 <MudDatePicker @bind-Date=date PickerVariant="PickerVariant.Dialog"></MudDatePicker>
 <MudButton xs="12" Class="mb-4 mt-4" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="CalculateBalance">Calculate Balance</MudButton>
 
+<MudText Typo="Typo.h6">$@forcastedAmount</MudText>
 
 <MudDivider></MudDivider>
 
@@ -41,7 +54,10 @@
 @code {
     public DateTime? date = DateTime.Today.AddDays(30);
     private string dateText = "2022-04-06";
+    private double forcastedAmount = 0.0;
+
     public List<Bill> Bills = new List<Bill>();
+    public List<Budget> Budgets = new List<Budget>();
     public List<Income> Incomes = new List<Income>();
 
     DialogOptions fullScreen = new DialogOptions() { FullScreen = true, CloseButton = true };
@@ -51,34 +67,26 @@
         if (!await localStorage.ContainKeyAsync("bills"))
             await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
 
-        if(!await localStorage.ContainKeyAsync("incomes"))
+        if (!await localStorage.ContainKeyAsync("incomes"))
             await localStorage.SetItemAsync<List<Income>>("incomes", Incomes);
-            
-        var bills = await localStorage.GetItemAsync<List<Bill>>("bills");
-        if (bills == null) await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
 
-        var incomes = await localStorage.GetItemAsync<List<Income>>("incomes");
-        if (incomes == null) await localStorage.SetItemAsync<List<Income>>("incomes", Incomes);
-    }
+        if (!await localStorage.ContainKeyAsync("budgets"))
+            await localStorage.SetItemAsync<List<Budget>>("budgets", Budgets);
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
         Bills = await localStorage.GetItemAsync<List<Bill>>("bills");
+        if (Bills == null) await localStorage.SetItemAsync<List<Bill>>("bills", new List<Bill>());
+
         Incomes = await localStorage.GetItemAsync<List<Income>>("incomes");
-        if (firstRender) this.StateHasChanged();
+        if (Incomes == null) await localStorage.SetItemAsync<List<Income>>("incomes", new List<Income>());
+
+        Budgets = await localStorage.GetItemAsync<List<Budget>>("budgets");
+        if (Budgets == null) await localStorage.SetItemAsync<List<Budget>>("budgets", new List<Budget>());
     }
 
     public async void CalculateBalance()
     {
-        //var apiName = $"https://localhost:7179/GetForcastedBalance?startingBalance=0&date={date.Value.ToShortDateString()}&includeBudgets=true";
-        //var httpResponse = await _httpClient.GetAsync(apiName);
-
-        //if (httpResponse.IsSuccessStatusCode)
-        //{
-        //    var forcastedBalanceResponse = JsonConvert.DeserializeObject<ForcastedBalance>(await httpResponse.Content.ReadAsStringAsync());
-        //    ForcastedBalance = forcastedBalanceResponse.Amount;
-        //    StateHasChanged();
-        //}
+        var transactions = _transactionService.GetTransactions(Incomes, Bills, Budgets, date.Value, true);
+        forcastedAmount = _transactionService.GetForcastedAmount(100.00, transactions.ToList(), date.Value);
     }
 
 }
