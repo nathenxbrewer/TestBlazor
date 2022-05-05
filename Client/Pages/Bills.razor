@@ -2,8 +2,26 @@
 @using BlazorApp.Client.Shared.Dialogs
 @using BlazorApp.Shared.Models
 @using Blazored.LocalStorage
+@using System.Text.Json
 @inject ILocalStorageService localStorage
 @inject IDialogService Dialog
+@inject IJSRuntime js
+@inject ISnackbar Snackbar
+
+@if (AllBills?.Count() > 0)
+{
+    <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="DeleteAll">Delete All</MudButton>
+}
+<InputFile id="fileInput" OnChange="UploadFiles" multiple hidden />
+
+<MudButton HtmlTag="label"
+           Variant="Variant.Filled"
+           Color="Color.Primary"
+           StartIcon="@Icons.Filled.CloudUpload"
+           for="fileInput">
+    Import
+</MudButton>
+<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="DownloadFile">Export</MudButton>
 
 @foreach (var bill in AllBills)
 {
@@ -39,6 +57,8 @@
 @code {
 
     public List<Bill> AllBills { get; set; } = new List<Bill>();
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,9 +72,54 @@
         var result = await dialog.Result;
         if (!result.Cancelled)
         {
-            AllBills.Add((Bill)result.Data);
+            var billToAdd = (Bill)result.Data;
+            billToAdd.Id = AllBills.Count();
+            AllBills.Add(billToAdd);
             await localStorage.SetItemAsync<List<Bill>>("bills", AllBills);
         }
 
     }
+    private async Task DeleteAll()
+    {
+        AllBills.Clear();
+        await localStorage.SetItemAsync<List<Bill>>("bills", AllBills);
+        StateHasChanged();
+    }
+
+    private async Task UploadFiles(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            //files.Add(file);
+            string fileContent = null;
+            using (var reader = new System.IO.StreamReader(file.OpenReadStream()))
+            {
+                var content = await reader.ReadToEndAsync();
+                var result = JsonSerializer.Deserialize<List<Bill>>(content);
+                try
+                {
+                    AllBills.AddRange(result);
+                }
+                catch (Exception ex)
+                {
+                    Snackbar.Add(ex.Message, Severity.Error);
+                }
+            }
+        }
+        //TODO upload the files to the server
+    }
 }
+
+@functions {
+    void DownloadFile()
+    {
+        //var text = "Hello, world!";
+        //var bytes = System.Text.Encoding.UTF8.GetBytes(text);
+
+        var data = JsonSerializer.Serialize(AllBills, options: new JsonSerializerOptions() { WriteIndented = true });
+        var bytes = System.Text.Encoding.UTF8.GetBytes(data);
+
+        FileUtil.SaveAs(js, $"BalanceForcaster - Bills - {DateTime.Today.ToString("MMddyyyy")}.json", bytes);
+    }
+}
+

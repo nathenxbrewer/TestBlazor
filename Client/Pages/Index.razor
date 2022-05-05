@@ -36,13 +36,14 @@
         <MudPaper Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
             <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
             <div>
-                <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Bills</MudText>
+                <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Budgets</MudText>
                 <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Budgets">@Budgets?.Count()</MudLink>
             </div>
         </MudPaper>
     </MudItem>
 </MudGrid>
 
+<MudTextField Class="pt-4" @bind-Value="StartingBalance" Label="Starting Balance" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
 <MudDatePicker @bind-Date=date PickerVariant="PickerVariant.Dialog"></MudDatePicker>
 <MudButton xs="12" Class="mb-4 mt-4" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="CalculateBalance">Calculate Balance</MudButton>
 
@@ -55,6 +56,7 @@
     public DateTime? date = DateTime.Today.AddDays(30);
     private string dateText = "2022-04-06";
     private double forcastedAmount = 0.0;
+    private double StartingBalance = 0.0;
 
     public List<Bill> Bills = new List<Bill>();
     public List<Budget> Budgets = new List<Budget>();
@@ -86,7 +88,7 @@
     public async void CalculateBalance()
     {
         var transactions = _transactionService.GetTransactions(Incomes, Bills, Budgets, date.Value, true);
-        forcastedAmount = _transactionService.GetForcastedAmount(100.00, transactions.ToList(), date.Value);
+        forcastedAmount = _transactionService.GetForcastedAmount(StartingBalance, transactions.ToList(), date.Value);
     }
 
 }

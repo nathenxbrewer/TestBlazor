@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 <MudThemeProvider />
 <MudDialogProvider />
+<MudSnackbarProvider />
 
 <MudLayout>
     <MudAppBar Elevation="1">
@@ -12,7 +13,7 @@
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu />
     </MudDrawer>
-    <MudMainContent Class="p-4 pt-12">
+    <MudMainContent Class="p-4 pt-16">
         @Body
     </MudMainContent>
 </MudLayout>
