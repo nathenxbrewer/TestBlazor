@@ -93,6 +93,7 @@
     {
         IncomeLabel = $"Income(${Incomes.Sum(x => x.Amount).ToString()})";
         IncomeLabel = $"Expenses(${Bills.Sum(x => x.Amount).ToString()})";
+
         string[] ChartLabels = { IncomeLabel, ExpenseLabel };
 
         if (!await localStorage.ContainKeyAsync("bills"))
