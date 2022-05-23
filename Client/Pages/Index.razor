@@ -6,50 +6,68 @@
 @inject ILocalStorageService localStorage
 @inject TransactionService _transactionService
 
+<MudTabs>
+    <MudTabPanel Text="Overview" Icon="@Icons.Material.Filled.Build">
+        <MudGrid Class="p-4">
+            <PageTitle>Index</PageTitle>
+            <MudItem xs="12" sm="12" md="12">
+                <MudText Typo="Typo.h3">Balance Forcaster</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudPaper Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+                    <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+                    <div>
+                        <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Income</MudText>
+                        <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Incomes">@Incomes?.Count()</MudLink>
+                    </div>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudPaper Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+                    <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+                    <div>
+                        <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Bills</MudText>
+                        <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Bills">@Bills?.Count()</MudLink>
+                    </div>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" sm="6" md="3">
+                <MudPaper Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
+                    <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
+                    <div>
+                        <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Budgets</MudText>
+                        <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Budgets">@Budgets?.Count()</MudLink>
+                    </div>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+
+    </MudTabPanel>
+    <MudTabPanel Text="Forcast" Icon="@Icons.Material.Filled.Api">
 
 
-<MudGrid Class="mt-4">
-    <PageTitle>Index</PageTitle>
-    <MudItem xs="12" sm="12" md="12">
-        <MudText Typo="Typo.h3">Balance Forcaster</MudText>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="3">
-        <MudPaper Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
-            <MudIcon Icon="@Icons.Material.Filled.AttachMoney" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
-            <div>
-                <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Income</MudText>
-                <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Incomes">@Incomes?.Count()</MudLink>
-            </div>
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="3">
-        <MudPaper Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
-            <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
-            <div>
-                <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Bills</MudText>
-                <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Bills">@Bills?.Count()</MudLink>
-            </div>
-        </MudPaper>
-    </MudItem>
 
-    <MudItem xs="12" sm="6" md="3">
-        <MudPaper Class="d-flex flex-row pt-6 pb-4" Style="height:100px;">
-            <MudIcon Icon="@Icons.Material.Filled.Article" Color="Color.Success" Class="mx-4" Style="width:54px; height:54px;"></MudIcon>
-            <div>
-                <MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-n1">Budgets</MudText>
-                <MudLink Typo="Typo.h5" Color=Color.Tertiary Style="cursor:pointer;" Href="/Budgets">@Budgets?.Count()</MudLink>
-            </div>
-        </MudPaper>
-    </MudItem>
-</MudGrid>
+        <MudTextField Class="pt-4" @bind-Value="StartingBalance" Label="Starting Balance" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+        <MudDatePicker @bind-Date=date PickerVariant="PickerVariant.Dialog"></MudDatePicker>
+        <MudButton xs="12" Class="mb-4 mt-4" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="CalculateBalance">Calculate Balance</MudButton>
 
-<MudTextField Class="pt-4" @bind-Value="StartingBalance" Label="Starting Balance" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
-<MudDatePicker @bind-Date=date PickerVariant="PickerVariant.Dialog"></MudDatePicker>
-<MudButton xs="12" Class="mb-4 mt-4" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" OnClick="CalculateBalance">Calculate Balance</MudButton>
+        <MudText Typo="Typo.h6">$@forcastedAmount</MudText>
 
-<MudText Typo="Typo.h6">$@forcastedAmount</MudText>
+        <MudDivider></MudDivider>
+    </MudTabPanel>
+    <MudTabPanel Text="Monthly" Icon="@Icons.Material.Filled.Build">
+        <MudChart ChartType="ChartType.Pie"
+                  InputData="@data"
+                  @bind-SelectedIndex="chartIndex"
+                  InputLabels="@ChartLabels"
+                  Width="300px"
+                  Height="300px" />
+    </MudTabPanel>
 
-<MudDivider></MudDivider>
+</MudTabs>
+
+
 
 
 @code {
@@ -63,9 +81,20 @@
     public List<Income> Incomes = new List<Income>();
 
     DialogOptions fullScreen = new DialogOptions() { FullScreen = true, CloseButton = true };
+    private int chartIndex = -1; //default value cannot be 0 -> first selectedindex is 0.
+    int dataSize = 4;
+    double[] data = { 6000, 2000 };
+
+    public string IncomeLabel { get; set; }
+    public string ExpenseLabel { get; set; }
+    public string[] ChartLabels { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        IncomeLabel = $"Income(${Incomes.Sum(x => x.Amount).ToString()})";
+        IncomeLabel = $"Expenses(${Bills.Sum(x => x.Amount).ToString()})";
+        string[] ChartLabels = { IncomeLabel, ExpenseLabel };
+
         if (!await localStorage.ContainKeyAsync("bills"))
             await localStorage.SetItemAsync<List<Bill>>("bills", Bills);
 
@@ -83,12 +112,51 @@
 
         Budgets = await localStorage.GetItemAsync<List<Budget>>("budgets");
         if (Budgets == null) await localStorage.SetItemAsync<List<Budget>>("budgets", new List<Budget>());
+
+        //figure monthly numbers.
+        var transactions = _transactionService.GetTransactions(Incomes, Bills, Budgets, date.Value, true).ToList();
+        data[0] = Incomes.Sum(x => x.Amount);
+
+        data[1] = Bills.Sum(x => x.Amount);
+
+
     }
 
     public async void CalculateBalance()
     {
         var transactions = _transactionService.GetTransactions(Incomes, Bills, Budgets, date.Value, true);
         forcastedAmount = _transactionService.GetForcastedAmount(StartingBalance, transactions.ToList(), date.Value);
+    }
+
+    public List<Income> GetMonthlyIncomes(List<Income> incomes)
+    {
+        var lastDayOfMonth = GetLastDayOfMonth(DateTime.Today);
+        var firstDayOfMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+        var outputIncomes = Incomes;
+        return outputIncomes;
+
+
+        //for (DateTime i = firstDayOfMonth; i <= lastDayOfMonth; i = i.AddMonths(1))
+        //{
+
+        //    if (i > DateTime.Today)
+        //    {
+        //        outputIncomes.Add(new Transaction()
+        //        {
+        //            Description = bill.Name,
+        //            Amount = bill.Amount * -1, //making it negative since it's a bill
+        //            Scheduled = i,
+        //            Type = TransactionType.Bill
+        //        });
+        //    }
+        //}
+
+    }
+
+    public DateTime GetLastDayOfMonth(DateTime dateTime)
+    {
+        return new DateTime(dateTime.Year, dateTime.Month, DateTime.DaysInMonth(dateTime.Year, dateTime.Month));
     }
 
 }
