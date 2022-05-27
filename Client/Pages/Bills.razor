@@ -1,12 +1,14 @@
 ﻿@page "/Bills"
 @using BlazorApp.Client.Shared.Dialogs
 @using BlazorApp.Shared.Models
+@using BlazorApp.Shared.Repositories
 @using Blazored.LocalStorage
 @using System.Text.Json
 @inject ILocalStorageService localStorage
 @inject IDialogService Dialog
 @inject IJSRuntime js
 @inject ISnackbar Snackbar
+@inject FinanceRepository financeRepo
 
 @if (AllBills?.Count() > 0)
 {
@@ -62,9 +64,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (!await localStorage.ContainKeyAsync("bills"))
-            await localStorage.SetItemAsync<List<Bill>>("bills", AllBills);
-        AllBills = await localStorage.GetItemAsync<List<Bill>>("bills");
+        //if (!await localStorage.ContainKeyAsync("bills"))
+        //    await localStorage.SetItemAsync<List<Bill>>("bills", AllBills);
+        //AllBills = await localStorage.GetItemAsync<List<Bill>>("bills");
+        financeRepo = new FinanceRepository("finance.db3");
+        AllBills = await financeRepo.GetAllBills();
     }
     private async Task AddBill()
     {
@@ -73,9 +77,10 @@
         if (!result.Cancelled)
         {
             var billToAdd = (Bill)result.Data;
-            billToAdd.Id = AllBills.Count();
-            AllBills.Add(billToAdd);
-            await localStorage.SetItemAsync<List<Bill>>("bills", AllBills);
+            financeRepo.AddNewBill(billToAdd);
+            //billToAdd.Id = AllBills.Count();
+            //AllBills.Add(billToAdd);
+            //await localStorage.SetItemAsync<List<Bill>>("bills", AllBills);
         }
 
     }

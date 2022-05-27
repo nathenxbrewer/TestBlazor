@@ -1,14 +1,19 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.ComponentModel.DataAnnotations;
+using MaxLengthAttribute = SQLite.MaxLengthAttribute;
 
 namespace BlazorApp.Shared.Models
 {
     public class Bill
     {
+        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public bool isActive { get; set; } = true;
-        [Required]
+
+        [MaxLength(250), Required, Unique]
         public string Name { get; set; }
+
         [Required]
         public DateTime? BeginDate { get; set; } = DateTime.Today;
         [Required]
